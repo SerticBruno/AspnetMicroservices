@@ -14,6 +14,13 @@ namespace Basket.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetValue<string>("CacheSettings:ConnectionString");
+            });
+
+            //builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
