@@ -1,6 +1,5 @@
 
 using Basket.API.Repositories;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace Basket.API
 {
@@ -22,7 +21,10 @@ namespace Basket.API
                 options.Configuration = builder.Configuration.GetValue<string>("CacheSettings:ConnectionString");
             });
 
+            // General Configuration
             builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+
+
 
             var app = builder.Build();
 

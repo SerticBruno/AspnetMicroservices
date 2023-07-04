@@ -1,6 +1,8 @@
 ﻿using Basket.API.Entities;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 
 namespace Basket.API.Repositories
 {
@@ -10,31 +12,29 @@ namespace Basket.API.Repositories
 
         public BasketRepository(IDistributedCache redisCache)
         {
-                _redisCache = redisCache;
+            _redisCache = redisCache ?? throw new ArgumentNullException(nameof(redisCache));
         }
 
-        public async Task DeleteBasket(string username)
+        public async Task<ShoppingCart> GetBasket(string userName)
         {
-            await _redisCache.RemoveAsync(username);
-        }
-
-        public async Task<ShoppingCart> GetBasket(string username)
-        {
-            var basket = await _redisCache.GetStringAsync(username);
+            var basket = await _redisCache.GetStringAsync(userName);
 
             if (String.IsNullOrEmpty(basket))
-            {
                 return null;
-            }
 
             return JsonConvert.DeserializeObject<ShoppingCart>(basket);
         }
 
         public async Task<ShoppingCart> UpdateBasket(ShoppingCart basket)
         {
-            await _redisCache.SetStringAsync(basket.Username, JsonConvert.SerializeObject(basket));
+            await _redisCache.SetStringAsync(basket.UserName, JsonConvert.SerializeObject(basket));
 
-            return await GetBasket(basket.Username);
+            return await GetBasket(basket.UserName);
+        }
+
+        public async Task DeleteBasket(string userName)
+        {
+            await _redisCache.RemoveAsync(userName);
         }
     }
 }
