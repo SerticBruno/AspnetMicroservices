@@ -24,8 +24,6 @@ namespace Basket.API
             // General Configuration
             builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 
-
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
